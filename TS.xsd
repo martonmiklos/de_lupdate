@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!-- XML Schema Generated from XML Document on Fri Dec 04 2015 20:27:29 GMT+0100 (CET) -->
+	<!-- with XmlGrid.net Free Online Service http://xmlgrid.net -->
+	<xs:element name="TS">
+		<xs:complexType>
+				<xs:sequence>
+					<xs:element name="context" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:sequence>
+										<xs:element name="name" type="xs:string"></xs:element>
+										<xs:element name="message" maxOccurs="unbounded">
+											<xs:complexType>
+													<xs:sequence>
+														<xs:element name="location" maxOccurs="unbounded">
+																<xs:complexType>
+																	<xs:attribute name="filename" type="xs:string"></xs:attribute>
+																	<xs:attribute name="line" type="xs:int"></xs:attribute>
+																</xs:complexType>
+														</xs:element>
+														<xs:element name="source" type="xs:string"></xs:element>
+														<xs:element name="translation" type="xs:string"></xs:element>
+													</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+					</xs:element>
+				</xs:sequence>
+				<xs:attribute name="version" type="xs:double"></xs:attribute>
+				<xs:attribute name="language" type="xs:string"></xs:attribute>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
