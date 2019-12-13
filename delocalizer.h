@@ -17,16 +17,11 @@ class Delocalizer
 {
 
 public:
-    explicit Delocalizer() {}
+    static bool delocalize(const QString & tsFilePath, const QString & projectPath = QString(), bool dryRun = false);
 
-    bool delocalize(const QString tsFilePath, QString outProjectPath = "");
-    void help();
 private:
-    QStringList inFileLines;
-    QStringList outFileLines;
-
-    bool replaceString(FileInfo *fileInfo, const QString & source, const QString & target, bool multiLine = false);
-    int findFileInfo(QList <FileInfo*> &list, QString fileName);
+    static bool replaceString(FileInfo *fileInfo, const QString & source, const QString & target, bool multiLine = false);
+    static int findFileInfo(QList <FileInfo*> &list, QString fileName);
 };
 
 

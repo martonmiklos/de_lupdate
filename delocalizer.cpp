@@ -18,19 +18,20 @@ int Delocalizer::findFileInfo(QList<FileInfo *> &list, QString fileName)
     return -1;
 }
 
-bool Delocalizer::delocalize(const QString tsFilePath, QString outProjectPath)
+bool Delocalizer::delocalize(const QString & tsFilePath, const QString & projectPath_, bool dryRun)
 {
     TS ts;
+    QString projectPath = projectPath_;
     bool ok = false;
     QFileInfo fi(tsFilePath);
     ts = ts.parseFile(tsFilePath, &ok);
 
     // if no outProjectPath use the folder where the TS file is.
-    if (outProjectPath.isEmpty())
-        outProjectPath = fi.path();
+    if (projectPath.isEmpty())
+        projectPath = fi.path();
 
     QList <FileInfo*> outFiles;
-    FileInfo *currentFileInfo = NULL;
+    FileInfo *currentFileInfo = nullptr;
     QString lastMessageFirstFileName = "";
     for (int i = 0; i<ts.contextList().count(); i++) {
         Context c = ts.contextList().at(i);
@@ -84,7 +85,7 @@ bool Delocalizer::delocalize(const QString tsFilePath, QString outProjectPath)
                     currentFileInfo = outFiles[infoIndex];
                 }
 
-                currentFileInfo->lineNumber += l.line(); // line is going to be 0 if not present at the attributes
+                currentFileInfo->lineNumber = (l.line() - 1); // line is going to be 0 if not present at the attributes
 
                 if (!msg.translation().value().isEmpty() && !msg.source().value().isEmpty()) {
                     // translated message replace back
@@ -116,39 +117,24 @@ bool Delocalizer::delocalize(const QString tsFilePath, QString outProjectPath)
         }
     }
 
-    foreach (FileInfo *info, outFiles) {
-        QFile outFile(outProjectPath + QDir::separator() + info->fileName);
-        qWarning() << "writing" << outFile.fileName();
-        if (!outFile.open(QFile::WriteOnly))  {
-            qWarning() << "Unable to open " << outFile.fileName() << " for write";
-            return false;
+    if (!dryRun) {
+        foreach (FileInfo *info, outFiles) {
+            QFile outFile(projectPath + QDir::separator() + info->fileName);
+            qWarning() << "writing" << outFile.fileName();
+            if (!outFile.open(QFile::WriteOnly))  {
+                qWarning() << "Unable to open " << outFile.fileName() << " for write";
+                return false;
+            }
+
+            QTextStream out(&outFile);
+            for ( QStringList::Iterator it = info->outFileLines.begin(); it != info->outFileLines.end(); ++it )
+                out << *it << "\n";
+
+            outFile.close();
         }
-
-        QTextStream out(&outFile);
-        for ( QStringList::Iterator it = info->outFileLines.begin(); it != info->outFileLines.end(); ++it )
-            out << *it << "\n";
-
-        outFile.close();
-        qWarning() << "DONE";
     }
 
     return true;
-}
-
-void Delocalizer::help()
-{
-    qWarning() << "\tde_lupdate\n"
-                  "\twritten by Miklos Marton <martonmiklosqdev [at] gmail {dot} com>\n"
-                  "\n"
-                  "\tAn utility to change push back the localized strings\n"
-                  "\tfrom a TS file to a source and ui codebase\n"
-                  "\n"
-                  "\tUsage:\n"
-                  "\tArguments:"
-                  "\t-ts : path to the ts file"
-                  "\t-proj : path to the project containing the codebase (optional)\n"
-                  "\t        the ts file folder is going to be used if left exist\n"
-                  "\t-h: ; displays this help";
 }
 
 bool Delocalizer::replaceString(FileInfo *fileInfo, const QString &source, const QString &target, bool multiLine)

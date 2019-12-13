@@ -1,11 +1,11 @@
-# de_lupdate
+# Inverse lupdate
 Push localized strings from *.ts files back to the source
 
 This tool can be used to change your Qt codebase to a localization translated to a *.ts file.
 
 This tool can be helpful in the following cases:
 - You have started the development in English for e.g. while all of your users are using your software localized. 
-Translating the strings after each release it time consuming, so you would like to pull back all localized strings from
+Translating the strings after each release it time consuming and error prone so you would like to pull back all localized strings from
 the ts file to your codebase. 
 
 Known limitations:
